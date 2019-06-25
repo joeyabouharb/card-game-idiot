@@ -32,3 +32,17 @@ def test_hand_player_cards():
         assert card not in test_player_two_hand
     assert count == 34
 
+def test_get_next_card_in_deck():
+    test_data = load_deck_data()
+    shuffle_deck(test_data)
+    test_deck = get_cards_in_deck(test_data)
+
+    test_player_one_hand = [card for card in hand_player_cards(test_deck)]
+    test_player_two_hand = [card for card in hand_player_cards(test_deck)]
+
+    test_card = get_next_card_in_deck(test_deck)
+    count = 0
+    for card in test_deck:
+        assert card != test_deck
+        count += 1
+    assert count == 33

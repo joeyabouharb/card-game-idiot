@@ -2,11 +2,11 @@
 handles deck shuffling and other actions...
 '''
 
-
+import types
 import random
-from read_write import load_deck_data
 
-def shuffle_deck(deck:list):
+
+def shuffle_deck(deck: list)-> list:
     '''
     responsible for shuffling the deck at the start of the game
     returns list
@@ -15,7 +15,8 @@ def shuffle_deck(deck:list):
     random.shuffle(deck)
     return deck
 
-def get_cards_in_deck(deck:list):
+
+def get_cards_in_deck(deck: list)-> types.GeneratorType:
     '''
     handles the passing and giving of cards in existing deck
     returns items as generator
@@ -23,10 +24,12 @@ def get_cards_in_deck(deck:list):
     for card in random.sample(deck, len(deck)):
         yield card
 
-def hand_player_cards(deck):
+
+def hand_player_cards(deck: types.GeneratorType)-> list:
     '''
     hand each user 9 cards at the start of the game
     '''
+
     user_deck = []
     for _ in range(9):
         card = next(deck)
@@ -34,9 +37,8 @@ def hand_player_cards(deck):
     return user_deck
 
 
-def get_next_card_in_deck(deck):
+def get_next_card_in_deck(deck: types.GeneratorType)-> str:
     '''
     return next card in deck
     '''
     return next(deck)
-
