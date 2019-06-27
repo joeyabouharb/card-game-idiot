@@ -1,0 +1,8 @@
+"Each player is handed 9 cards. 6 are placed on the table 3 of them side up.
+These cards can only be played once the other 34 cards in the deck are exhausted.
+ The other 3 are the hand of each player. Players must play a card,
+which must be  higher than the previous play, otherwise they must pick up the
+discard pile. The cards 2, 7, 10 are wildcards that can reset values, reverse
+the play and bomb the discard pile respectively.
+Players must pick up a card from the deck once they play a card down.
+Whoever finishes the game with no cards left to play wins"

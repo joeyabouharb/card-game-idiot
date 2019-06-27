@@ -1,6 +1,6 @@
 import json
 from read_write import load_deck_data
-from deck import shuffle_deck, hand_player_cards, get_cards_in_deck, get_next_card_in_deck
+from deck import *
 
 def test_load_deck_data():
     data = load_deck_data()
@@ -43,6 +43,19 @@ def test_get_next_card_in_deck():
     test_card = get_next_card_in_deck(test_deck)
     count = 0
     for card in test_deck:
-        assert card != test_deck
+        assert card is not test_deck
         count += 1
     assert count == 33
+
+
+def test_split_hand():
+    test_data = load_deck_data()
+    shuffle_deck(test_data)
+    test_deck = get_cards_in_deck(test_data)
+
+    test_player_one_hand = [card for card in hand_player_cards(test_deck)]
+
+    test_dict = split_hand(test_player_one_hand)
+    assert len(test_dict['user_hand']) == 3
+    assert len(test_dict['hidden']) == 3
+    assert len(test_dict['visible']) == 3

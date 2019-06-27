@@ -1,0 +1,7 @@
+Idiot Help
+
+    Execute with:
+     -h to display this help prompt
+     -p to start the game
+     -r to show the game rules
+     -s to display user score

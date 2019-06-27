@@ -24,25 +24,25 @@ The expected deadline for completing this application is within 2 weeks and all 
 
 
 ## Software Overview
-### 1. Features
+### 1. Features \ User Stories
 
-#### 1. Randomisation
+#### 1. As a user I expect the game's starting cards be different each play
 
 Randomisation is significant in developing video games in order to ensure better interactivity and challenge. By importing python's random library we can simulate cards shuffling and deck creation easily. This will ensure that each play is relatively unique and fun for players. By using lists (or sets) with random's shuffle method we can rearrange the order of items in lists. We can also use random's sample method to hand out decks to each card, ensuring that they are removed from the deck. Consider using loops in order to iterate through the deck as well as yields (generator methods), which ensures cards are handed when needed. 
 
-#### 2. JSON File Storage
+#### 2. As a user I want to retrieve game data such as total score and the game rules
 
 A method of storing structured data is needed to store constants like card names, rules, menus as well as user data like scores. JSON is handy for storing and retrieving such data. Python has the JSON to retrieve and store this data using json.load() and json.dump() respectively. python usually handles these variables as dict types, so key values are needed to retrieve specific objects. Error handling with try/except is important to consider when using these functions in order to check the integrity of these files and whether they exist. The Path and os library have functions that provide checks to check whether certain data exists. 
 
-#### 3. AI / Rules Simulating
+#### 3. As a user I expect the AI to handle the games rules accurately, and behave differently on each turn
 
-A way to simulate a computer/ AI user is required for this game to be played. creating variables which keep both the user and the AI's hand are needed, as well as their own functions that perform methods on them. These methods should perform actions like play_from_hand pick_discard pick_from_deck etc. If statements should be used to read their deck and appropriately play the right card - play the next highest card (from the previously played) from their hand and pick from the deck as well as detect if the wildcards are played. for loop? statements should also be used to automate both the AI and the user to pick up the discard pile when they have no winning hand.  
-
-
+A way to simulate a computer/ AI user is required for this game to be played. creating variables which keep both the user and the AI's hand are needed, as well as their own functions that perform methods on them. These methods should perform actions like play_from_hand pick_discard pick_from_deck etc. The AI requires the Random library in order to simulate random behaviour. If statements should be used to read their deck and appropriately play the right card - play the next highest card (from the previously played) from their hand and pick from the deck as well as detect if the wildcards are played. for loop? statements should also be used to automate both the AI and the user to pick up the discard pile when they have no winning hand.  
 
 
 
-### 3 User Interaction
+
+
+### 2. User Interaction
 
 In order to execute the app the user must provide either these as command line arguments:
 
