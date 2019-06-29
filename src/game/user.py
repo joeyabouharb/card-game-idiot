@@ -1,39 +1,54 @@
 '''
 module to handle user turn
 '''
-from actions import validate_user_input,\
-    get_previous_play,\
-    get_played_card,\
-    check_for_wild_card
+from card_selector import validate_user_input,\
+    get_played_card
 
 
-def stringify_deck(user_deck: dict) -> (str):
+def stringify_deck(user_deck: dict, available_deck: str) -> (str):
     '''
     grabs user's current hand and  ->
     returns strings
     '''
     msg = "user's current Hand:\n"
-    
-    for i, card in enumerate(user_deck['user_hand']):
+    print(available_deck)
+    for i, card in enumerate(user_deck[available_deck]):
         i += 1
-        msg += f'{i} {card}'
+        if available_deck == 'hidden':
+            card = '#'
+        msg += f'{i}) {card["name"]}\t\t'
+    if user_deck['visible'] and available_deck != 'visible':
+        msg += f'\nvisible on table: \n'
+        for card in user_deck['visible']:
+            msg += f'{card["name"]}\t'
+    if user_deck['hidden'] and available_deck != 'hidden':
+        msg += "\n"
+        for card in user_deck['hidden']:
+            msg += f'#\t\t'
+
+    return msg
 
 
-def prompt_user_turn(user_deck: dict, discard: list) -> (dict):
+def prompt_user_turn(available_deck: str, user_deck: dict, prev_card: dict, wildcard=None) -> (dict):
     '''
     prompt user turn returns the selected card as dict
     '''
-    prev_card = get_previous_play(discard)
 
-    user_view = stringify_deck(user_deck)
-    print(user_view)
+    deck = stringify_deck(user_deck, available_deck)
+    wildcard_played = "" if not wildcard else f'{wildcard["name"]} - Wildcard Played!\n'
+    previous = "\nNo cards in discard\n" if not prev_card["value"]\
+        else f'\nBeat Previous Card {prev_card["name"]}\n'
+    print(wildcard_played)
+    print(previous)
+    print(deck)
 
     user_input = None
-    while user_input is None:
+    index = None
+    user_hand = user_deck[available_deck]
+
+    while index is None:
         user_input = input('')
-
-    index = validate_user_input(user_deck, prev_card)
-    current_play = get_played_card(user_deck, index)
-    return check_for_wild_card(True, prev_card, current_play, discard)
-
-
+        index = validate_user_input(user_input, user_hand, prev_card)
+    print(prev_card)
+    print(user_hand[index])
+    return get_played_card(user_hand, index)

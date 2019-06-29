@@ -1,80 +1,25 @@
 '''
 This file defines actions user/s can make in order to play the game
 '''
-from user import prompt_user_turn
-from opponent import prompt_opponent_turn
+import types
+from wildcards import *
+from deck import get_next_card_in_deck
 
-
-def validate_user_input(user_input: str, user_deck: dict,
-                        prev_card: dict)-> (int):
-    '''
-    validates user input to int,
-    checks if played card is higher than the prev_card and
-    returns the integer as the index of the user deck
-    '''
-    user_deck = list(user_deck.items()).pop()
-
-    user_input = user_input.strip()
-    if not user_input.isdigit():
-        return None
-        # val = validate_user_input(
-            # input('not a number try again: ', user_deck, prev_card))
-    try:
-        val = int(user_input) - 1
-    except ValueError:
-        return None
-        # val = validate_user_input(input('please enter a number from 1-3... '))
-
-    if val >= len(user_deck):
-        return None
-        # val = validate_user_input(
-        #    input('please enter a number from 1-3 '), user_deck, prev_card)
-
-
-    if not check_card_values(user_deck, prev_card, val):
-        return None
-        # val = validate_user_input(
-        #    input('please enter a number from 1-3 '), user_deck, prev_card)
-
-    return val
-
-
-def get_played_card(user_deck: list, play_card: int)-> (dict):
-    '''
-    takes in the current user deck as list,
-    and the play card which is int
-    return's the item dictionary from the user_deck
-    '''
-    card = user_deck[play_card]
-    return card
-
-
-def check_card_values(user_deck: list, prev_card: dict, val: int)-> (bool):
-    '''
-    checks the player deck against the previous play,
-    if no higher card is found return True or False
-    '''
-    if user_deck[val]['value'] == 2 or\
-        user_deck[val]['value'] == 7 or\
-        user_deck[val]['value'] == 10:
-        return True
-
-    if user_deck[val]['value'] < prev_card['value']:
-        return False
-    return True
-
-
-def add_to_discard(discard: list, prev_play: dict) -> (None):
+def add_to_discard(discard: list, prev_play: dict, player_hand: list) -> (None):
     '''
     adds played card to discard pile
     '''
+    available_hand = get_available_play(player_hand)
+    player_hand[available_hand].remove(prev_play)
     discard.insert(0, prev_play)
-
+    print(discard)
 
 def get_previous_play(discard: list) -> (dict):
     '''
     returns previously added cart to discard
     '''
+    if not discard:
+        return {'value': 0}
     return discard[0]
 
 def check_user_can_play(player_hand: list, prev_play: dict) -> (bool):
@@ -83,51 +28,67 @@ def check_user_can_play(player_hand: list, prev_play: dict) -> (bool):
     return False otherwise return True
     '''
     card_checks = []
+    wild_cards = [2, 7, 10]
+    if not prev_play['value'] or\
+        any(card['value'] in wild_cards for card in player_hand):
+        return False
+
     for card in player_hand:
         card_checks.append(card['value'] > prev_play['value'])
-    return all(check is False for check in card_checks)
+    print(player_hand)
+    print(card_checks)
+    return all(not check for check in card_checks)
 
 def add_discard_to_hand(discard: list, player_hand: list) -> (None):
     '''
     adds discard to player hand
     '''
-    player_hand.extend(discard.copy())
-    discard = []
+    player_hand['user_hand'].extend(discard.copy())
+    discard.clear()
 
 
-def check_for_wild_card(is_human: bool, current_play: dict, discard: list, user_deck: dict)-> (types):
+def get_available_play(user_deck: dict) ->(str):
     '''
-    checks for wild card and changes the game accordingly
+    checks what current deck the user could play returns the dictionary
+    key -> string
+    '''
+    if user_deck['user_hand'] is not False:
+        return 'user_hand'
+    if user_deck['visible'] is not False:
+        return 'visible'
+    return 'hidden'
+
+def check_for_wild_card(is_human: bool, current_play: dict,\
+    discard: list, user_deck: list, enemy_deck: dict)-> (dict):
+    '''
+    checks for wild card and changes the game execution accordingly
     returns both the new card value and the original as dict
     '''
+    get_prev_val = get_previous_play(discard)
+    add_to_discard(discard, current_play, user_deck)
+    available_play = get_available_play(user_deck)
 
+    is_wildcard = False
     if current_play['value'] == 2:
-        return two_is_played(is_human, current_play)
+        deck = user_deck if is_human else user_deck
+        new_play = two_is_played(is_human, current_play, deck, available_play, current_play)
+        add_to_discard(discard, new_play, user_deck)
+        is_wildcard = True
     elif current_play['value'] == 7:
-        return seven_is_played(is_human, current_play)
+        deck = enemy_deck if is_human else user_deck
+        available_play = get_available_play(deck)
+        cannot_still_play = check_user_can_play(deck[available_play], get_prev_val)
+        if cannot_still_play:
+            is_wild = False
+            add_discard_to_hand(discard, deck['user_deck'])
+        else:
+            new_play = seven_is_played(is_human, current_play, deck, available_play, get_prev_val)
+            is_wildcard = True
+            add_to_discard(discard, new_play, user_deck)
     elif current_play['value'] == 10:
+        is_wildcard = True
         discard.clear()
-        return None
-    return current_play
+        new_play = ten_is_played(is_human, user_deck, available_play, current_play, {"value": 0})
+        add_to_discard(discard, new_play, user_deck)
 
-
-def two_is_played(is_human: bool, current_play: dict,\
-    user_deck: dict, oppenent_deck: dict, discard: list):
-
-    if is_human:
-        prompt_opponent_turn(oppenent_deck, discard)
-        discard.append(current_play)
-
-    prompt_user_turn(user_deck, discard)
-    discard.append(current_play)
-
-
-def seven_is_played(is_human: bool, wild_card: dict,\
-    user_deck: dict, opponent_deck: dict, discard: list):
-
-    if is_human:
-        discard.append(wild_card)
-        return prompt_user_turn(user_deck, discard)
-
-    discard.append(wild_card)
-    return prompt_opponent_turn(opponent_deck, discard)
+    return current_play, is_wildcard
