@@ -46,13 +46,12 @@ def check_card_values(user_deck: list, prev_card: dict, val: int)-> (bool):
 
     if prev_card['value'] == 2 or\
         prev_card['value'] == 10:
-            return True
+        return True
     print(user_deck[val])
     print(prev_card)
     if user_deck[val]['value'] < prev_card['value']:
         return False
     return True
-
 
 
 def get_played_card(user_deck: list, play_card: int)-> (dict):
@@ -63,4 +62,3 @@ def get_played_card(user_deck: list, play_card: int)-> (dict):
     '''
     card = user_deck[play_card]
     return card
-

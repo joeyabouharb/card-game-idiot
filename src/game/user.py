@@ -7,8 +7,8 @@ from card_selector import validate_user_input,\
 
 def stringify_deck(user_deck: dict, available_deck: str) -> (str):
     '''
-    grabs user's current hand and  ->
-    returns strings
+    grabs user's current available hand and  ->
+    returns string
     '''
     msg = "user's current Hand:\n"
     print(available_deck)
@@ -29,7 +29,8 @@ def stringify_deck(user_deck: dict, available_deck: str) -> (str):
     return msg
 
 
-def prompt_user_turn(available_deck: str, user_deck: dict, prev_card: dict, wildcard=None) -> (dict):
+def prompt_user_turn(available_deck: str, user_deck: dict,\
+    prev_card: dict, wildcard=None) -> (dict):
     '''
     prompt user turn returns the selected card as dict
     '''
@@ -51,4 +52,5 @@ def prompt_user_turn(available_deck: str, user_deck: dict, prev_card: dict, wild
         index = validate_user_input(user_input, user_hand, prev_card)
     print(prev_card)
     print(user_hand[index])
+
     return get_played_card(user_hand, index)

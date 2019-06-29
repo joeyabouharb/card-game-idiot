@@ -1,7 +1,6 @@
 '''
 module handling deck shuffling and dealing
 '''
-
 import types
 import random
 
@@ -12,7 +11,7 @@ def shuffle_deck(deck: list)-> (list):
     returns list
     '''
     random.shuffle(deck)
-    random.shuffle(deck)
+
     return deck
 
 
@@ -44,7 +43,7 @@ def split_hand(hand: list) -> (dict):
     -visible
     -hidden
     '''
-    user_hand= [hand.pop(n) for n in random.sample(range(len(hand)-2), 3)]
+    user_hand = [hand.pop(n) for n in random.sample(range(len(hand)-2), 3)]
     visible = [hand.pop(n) for n in random.sample(range(len(hand)-2), 3)]
     hidden = hand
 
@@ -64,7 +63,7 @@ def get_next_card_in_deck(deck: types.GeneratorType)-> (dict):
     return next(deck)
 
 
-def check_if_deck_empty(next_out, deck: types.GeneratorType) -> (bool):
+def check_if_deck_empty(next_out) -> (bool):
     '''
     check if generator is exausted
     '''

@@ -1,9 +1,7 @@
 '''
 This file defines actions user/s can make in order to play the game
 '''
-import types
-from wildcards import *
-from deck import get_next_card_in_deck
+
 
 def add_to_discard(discard: list, prev_play: dict, player_hand: list) -> (None):
     '''
@@ -39,11 +37,12 @@ def check_user_can_play(player_hand: list, prev_play: dict) -> (bool):
     print(card_checks)
     return all(not check for check in card_checks)
 
+
 def add_discard_to_hand(discard: list, player_hand: list) -> (None):
     '''
     adds discard to player hand
     '''
-    player_hand['user_hand'].extend(discard.copy())
+    player_hand.extend(discard.copy())
     discard.clear()
 
 
@@ -58,37 +57,17 @@ def get_available_play(user_deck: dict) ->(str):
         return 'visible'
     return 'hidden'
 
-def check_for_wild_card(is_human: bool, current_play: dict,\
-    discard: list, user_deck: list, enemy_deck: dict)-> (dict):
+
+def check_for_wild_card(current_play: dict)-> (dict):
     '''
     checks for wild card and changes the game execution accordingly
     returns both the new card value and the original as dict
     '''
-    get_prev_val = get_previous_play(discard)
-    add_to_discard(discard, current_play, user_deck)
-    available_play = get_available_play(user_deck)
 
     is_wildcard = False
-    if current_play['value'] == 2:
-        deck = user_deck if is_human else user_deck
-        new_play = two_is_played(is_human, current_play, deck, available_play, current_play)
-        add_to_discard(discard, new_play, user_deck)
+    if current_play['value'] == 2\
+    or current_play['value'] == 7\
+    or current_play['value'] == 10:
         is_wildcard = True
-    elif current_play['value'] == 7:
-        deck = enemy_deck if is_human else user_deck
-        available_play = get_available_play(deck)
-        cannot_still_play = check_user_can_play(deck[available_play], get_prev_val)
-        if cannot_still_play:
-            is_wild = False
-            add_discard_to_hand(discard, deck['user_deck'])
-        else:
-            new_play = seven_is_played(is_human, current_play, deck, available_play, get_prev_val)
-            is_wildcard = True
-            add_to_discard(discard, new_play, user_deck)
-    elif current_play['value'] == 10:
-        is_wildcard = True
-        discard.clear()
-        new_play = ten_is_played(is_human, user_deck, available_play, current_play, {"value": 0})
-        add_to_discard(discard, new_play, user_deck)
 
-    return current_play, is_wildcard
+    return is_wildcard
