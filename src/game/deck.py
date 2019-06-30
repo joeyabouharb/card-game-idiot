@@ -22,6 +22,7 @@ def get_cards_in_deck(deck: list)-> (types.GeneratorType):
     '''
     for card in random.sample(deck, len(deck)):
         yield card
+    return False
 
 
 def hand_player_cards(deck: types.GeneratorType)-> (list):
@@ -60,13 +61,5 @@ def get_next_card_in_deck(deck: types.GeneratorType)-> (dict):
     '''
     return next card in deck
     '''
-    return next(deck)
+    return next(deck, False)
 
-
-def check_if_deck_empty(next_out) -> (bool):
-    '''
-    check if generator is exausted
-    '''
-    if next_out is None:
-        return False
-    return True

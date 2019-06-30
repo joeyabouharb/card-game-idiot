@@ -3,7 +3,7 @@ helps validate player card selection and return the appropriate card
 '''
 
 
-def validate_user_input(user_input: str, user_deck: list,
+def validate_user_input(available_deck: str, user_input: str, user_deck: list,
                         prev_card: dict)-> (int):
     '''
     validates user input to int,
@@ -26,7 +26,7 @@ def validate_user_input(user_input: str, user_deck: list,
         return None
         # val = validate_user_input(
         #    input('please enter a number from 1-3 '), user_deck, prev_card)
-    if not check_card_values(user_deck, prev_card, val):
+    if not check_card_values(available_deck, user_deck, prev_card, val):
         return None
         # val = validate_user_input(
         #    input('please enter a number from 1-3 '), user_deck, prev_card)
@@ -34,21 +34,24 @@ def validate_user_input(user_input: str, user_deck: list,
     return val
 
 
-def check_card_values(user_deck: list, prev_card: dict, val: int)-> (bool):
+def check_card_values(available_deck: str, user_deck: list, prev_card: dict, val: int)-> (bool):
     '''
     checks the player deck against the previous play,
     if no higher card is found return True or False
     '''
+    if available_deck == 'hidden':
+        return True
+
     if user_deck[val]['value'] == 2 or\
         user_deck[val]['value'] == 7 or\
         user_deck[val]['value'] == 10:
         return True
-
+    if not prev_card:
+        return True
     if prev_card['value'] == 2 or\
         prev_card['value'] == 10:
         return True
-    print(user_deck[val])
-    print(prev_card)
+
     if user_deck[val]['value'] < prev_card['value']:
         return False
     return True

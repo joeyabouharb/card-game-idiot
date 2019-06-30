@@ -46,19 +46,26 @@ def game():
 
                 if len(deck['user_hand']) < 3:
                     new_card = get_next_card_in_deck(deck_generator)
-                    deck['user_hand'].append(new_card)
+                    if new_card:
+                        deck['user_hand'].append(new_card)
+
+        if all(not filled for filled in user_deck.values()):
+            # msg += get_win_msg()
+            # end_game(True, msg)
+            break
 
         while is_wildcard:
             # deck = user_deck if is_human else opponent_deck
             deck = user_deck
             played_card, is_wildcard =\
                 prompt_wildcard_turn(is_human, played_card, discard, deck, opponent_deck)
+            if played_card:
+                add_to_discard(discard, played_card, deck)
+                new_card = get_next_card_in_deck(deck_generator)
+            if new_card:
+                deck['user_hand'].append(new_card)
 
-            add_to_discard(discard, played_card, deck)
-            new_card = get_next_card_in_deck(deck_generator)
-            deck['user_hand'].append(new_card)
-
-        if not user_deck:
+        if all(not filled for filled in user_deck.values()):
             # msg += get_win_msg()
             # end_game(True, msg)
             break
@@ -68,10 +75,6 @@ def player_turn(is_human: bool, discard: list, deck: dict) -> (dict):
     '''
     takes in game variables and function call to any player
     and prompts them to pick an available card
-    -- is_human: bool handles turns between user and AI
-    --discard: discard pile list
-    --deck: current player deck
-    returns picked card -> dict
     '''
 
     prev_card = get_previous_play(discard)
@@ -79,13 +82,18 @@ def player_turn(is_human: bool, discard: list, deck: dict) -> (dict):
     cannot_play = check_user_can_play(deck[available_deck], prev_card)
     hand = deck['user_hand']
 
-    if cannot_play:
+    if cannot_play and available_deck != 'hidden':
         add_discard_to_hand(discard, hand)
         return {}, False
 
     prompt = prompt_user_turn if is_human else prompt_opponent_turn
     played_card = prompt(available_deck, deck, prev_card)
+
     is_wildcard = check_for_wild_card(played_card)
+    if available_deck == 'hidden':
+        if played_card['value'] < prev_card['value'] and not is_wildcard:
+            add_discard_to_hand(discard, deck['user_hand'])
+            return {}, False
 
     return played_card, is_wildcard
 
@@ -94,15 +102,8 @@ def prompt_wildcard_turn(is_human: bool, played_card: dict,\
     discard: list, user_deck: dict, enemy_deck: dict) -> (dict):
     '''
     this prompt triggers when a wildcard is played and changes the state of the game
-    --is_human: determines if it is an AI Turn - bool
-    --played_card: wildcard that was played - dict
-    -- discard: discard pile - list
-    -- user_deck dict - list
-    -- enemy_deck enemy's deck - dict
-    returns -> dict new card played
     '''
     available_deck = get_available_play(user_deck)
-
     if played_card['value'] == 2:
         # prompt = prompt_opponent_turn if is_human else prompt_user_turn
         prompt = prompt_user_turn
@@ -113,13 +114,30 @@ def prompt_wildcard_turn(is_human: bool, played_card: dict,\
     elif played_card['value'] == 7:
         # prompt = prompt_opponent_turn if is_human else prompt_user_turn
         prompt = prompt_user_turn
-        card_to_match = discard[1]
+        card_to_match = {}
+        if len(discard) > 4:
+            cards_to_match = discard[:4]
+        else:
+            cards_to_match = discard[:len(discard)]
+        for card in cards_to_match:
+            if card['value'] != 7:
+                card_to_match = card
+                break
         # deck = enemy_deck if is_human else user_deck
         deck = user_deck
+        cannot_play = check_user_can_play(deck[available_deck], card_to_match)
+        if cannot_play and available_deck != 'hidden':
+            add_discard_to_hand(discard, deck['user_hand'])
+            return {}, False
         played_card = seven_is_played(\
             prompt, played_card, deck, available_deck, card_to_match\
         )
         is_wildcard = check_for_wild_card(played_card)
+        if available_deck == 'hidden':
+            if played_card['value'] < card_to_match['value'] and not is_wildcard:
+                add_discard_to_hand(discard, deck['user_hand'])
+                return {}, False
+
     elif played_card['value'] == 10:
         # deck = user_deck if is_human else enemy_deck
         deck = user_deck

@@ -3,22 +3,23 @@ This file defines actions user/s can make in order to play the game
 '''
 
 
-def add_to_discard(discard: list, prev_play: dict, player_hand: list) -> (None):
+def add_to_discard(discard: list, prev_play: dict, player_hand: dict) -> (None):
     '''
     adds played card to discard pile
     '''
+
     available_hand = get_available_play(player_hand)
     player_hand[available_hand].remove(prev_play)
     discard.insert(0, prev_play)
     print(discard)
 
-def get_previous_play(discard: list) -> (dict):
+def get_previous_play(discard: list, index=0) -> (dict):
     '''
     returns previously added cart to discard
     '''
     if not discard:
-        return {'value': 0}
-    return discard[0]
+        return False
+    return discard[index] if len(discard) > index else False
 
 def check_user_can_play(player_hand: list, prev_play: dict) -> (bool):
     '''
@@ -27,14 +28,12 @@ def check_user_can_play(player_hand: list, prev_play: dict) -> (bool):
     '''
     card_checks = []
     wild_cards = [2, 7, 10]
-    if not prev_play['value'] or\
+    if not prev_play or\
         any(card['value'] in wild_cards for card in player_hand):
         return False
 
     for card in player_hand:
-        card_checks.append(card['value'] > prev_play['value'])
-    print(player_hand)
-    print(card_checks)
+        card_checks.append(card['value'] >= prev_play['value'])
     return all(not check for check in card_checks)
 
 
@@ -51,9 +50,9 @@ def get_available_play(user_deck: dict) ->(str):
     checks what current deck the user could play returns the dictionary
     key -> string
     '''
-    if user_deck['user_hand'] is not False:
+    if user_deck['user_hand']:
         return 'user_hand'
-    if user_deck['visible'] is not False:
+    elif user_deck['visible']:
         return 'visible'
     return 'hidden'
 
