@@ -11,7 +11,7 @@ def add_to_discard(discard: list, prev_play: dict, player_hand: dict) -> (None):
     available_hand = get_available_play(player_hand)
     player_hand[available_hand].remove(prev_play)
     discard.insert(0, prev_play)
-    print(discard)
+
 
 def get_previous_play(discard: list, index=0) -> (dict):
     '''

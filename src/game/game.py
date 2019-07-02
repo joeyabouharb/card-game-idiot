@@ -1,25 +1,21 @@
 '''
 handles general gameplay, interactions with user and opponent, etc.
 '''
-from user import prompt_user_turn
-from wildcards import (
-    ten_is_played, two_is_played,
-    seven_is_played
-)
-from actions import (
+from game.user import prompt_user_turn
+from game.actions import (
     add_discard_to_hand, add_to_discard,
     get_available_play, get_previous_play,
     check_user_can_play, check_for_wild_card,
     get_reversed_value
 )
-from deck import (
+from game.deck import (
     get_cards_in_deck, get_next_card_in_deck,
     split_hand, hand_player_cards
 )
-from read_write import load_deck_data
-from opponent import prompt_opponent_turn
+from game.read_write import load_deck_data
+from game.opponent import prompt_opponent_turn
 
-def game():
+def game(name: str):
     '''
     main function that exucutes gameplay
     '''
@@ -36,25 +32,25 @@ def game():
     is_wildcard = False
 
     while not check_if_game_ended(user_deck, opponent_deck):
-        if not is_wildcard:
-            (deck, opponent_stats, is_human)\
-                = get_next_turn(is_human, user_deck, opponent_deck)
 
-            played_card, is_wildcard =\
-                player_turn(is_human, discard, deck, opponent_stats)
+        (deck, opponent_stats, is_human)\
+            = get_next_turn(is_human, user_deck, opponent_deck)
 
-            if played_card:
-                add_to_discard(discard, played_card, deck)
+        played_card, is_wildcard =\
+            player_turn(is_human, discard, deck, opponent_stats)
 
-                if len(deck['user_hand']) < 3:
-                    new_card = get_next_card_in_deck(deck_generator)
-                    if new_card:
-                        deck['user_hand'].append(new_card)
+        if played_card:
+            add_to_discard(discard, played_card, deck)
+
+            if len(deck['user_hand']) < 3:
+                new_card = get_next_card_in_deck(deck_generator)
+                if new_card:
+                    deck['user_hand'].append(new_card)
 
         while is_wildcard and\
             not check_if_game_ended(user_deck, opponent_deck):
-            if played_card['value'] != '10':
-                (deck, opponent_stats, is_human)\
+            if played_card['value'] != 10:
+                deck, opponent_stats, is_human\
                     = get_next_turn(is_human, user_deck, opponent_deck)
             played_card,\
             is_wildcard = prompt_wildcard_turn(is_human, played_card, discard, deck, opponent_stats)
@@ -155,5 +151,4 @@ def get_next_turn(is_human: bool, user_deck: dict, opponent_deck: dict) -> (dict
     }
     return deck, opponent_stats, is_human
 
-game()
 

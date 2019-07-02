@@ -1,7 +1,7 @@
 '''
 module to handle user turn
 '''
-from card_selector import validate_user_input,\
+from game.card_selector import validate_user_input,\
     get_played_card
 
 
@@ -61,7 +61,6 @@ def prompt_user_turn(available_deck: str, user_deck: dict,\
     while index is None:
         user_input = input('Select available options, or type pick to pick from pile: ')
         index = validate_user_input(available_deck, user_input, user_hand, prev_card)
-    print(prev_card)
-    print(user_hand[index])
+
 
     return get_played_card(user_hand, index)
