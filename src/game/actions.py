@@ -70,3 +70,19 @@ def check_for_wild_card(current_play: dict)-> (dict):
         is_wildcard = True
 
     return is_wildcard
+
+
+def get_reversed_value(discard: list) -> (dict):
+    '''
+    get's reversed value when a 7 is played, checks if 7s were played before
+    '''
+    card_to_match = {}
+    if len(discard) > 4:
+            cards_to_match = discard[:4]
+    else:
+            cards_to_match = discard[:len(discard)]
+    for card in cards_to_match:
+        if card['value'] != 7:
+            card_to_match = card
+            break
+    return card_to_match

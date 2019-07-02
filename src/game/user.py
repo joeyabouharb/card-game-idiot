@@ -33,7 +33,7 @@ def stringify_deck(user_deck: dict, available_deck: str) -> (str):
 
 
 def prompt_user_turn(available_deck: str, user_deck: dict,\
-    prev_card: dict, wildcard=None) -> (dict):
+    prev_card: dict, wildcard={}) -> (dict):
     '''
     prompt user turn returns the selected card as dict
     '''
