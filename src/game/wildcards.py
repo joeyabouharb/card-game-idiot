@@ -25,4 +25,4 @@ def ten_is_played(prompt: types.FunctionType, deck: dict,\
     '''
     calls the prompt function to the appropriate player and handles wildcard
     '''
-    return prompt(available_deck, deck, {}, wild_card)
+    return prompt(available_deck, deck, {   }, wild_card)

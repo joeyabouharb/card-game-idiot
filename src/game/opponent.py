@@ -12,7 +12,7 @@ from card_selector import (
 
 
 def prompt_opponent_turn(available_deck: str, opponent_deck: dict,\
-        prev_card: dict, wildcard={}):
+        prev_card: dict, opponent_stats: dict, wildcard={}):
     '''
     handles opponent turn and card selection
     '''

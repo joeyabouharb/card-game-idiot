@@ -36,11 +36,12 @@ def game():
     is_wildcard = False
 
     while not check_if_game_ended(user_deck, opponent_deck):
-
         if not is_wildcard:
-            (deck, is_human) = get_next_turn(is_human, user_deck, opponent_deck)
+            (deck, opponent_stats, is_human)\
+                = get_next_turn(is_human, user_deck, opponent_deck)
+
             played_card, is_wildcard =\
-                player_turn(is_human, discard, deck)
+                player_turn(is_human, discard, deck, opponent_stats)
 
             if played_card:
                 add_to_discard(discard, played_card, deck)
@@ -53,10 +54,10 @@ def game():
         while is_wildcard and\
             not check_if_game_ended(user_deck, opponent_deck):
             if played_card['value'] != '10':
-                (deck, is_human) = get_next_turn(is_human, user_deck, opponent_deck)
-
+                (deck, opponent_stats, is_human)\
+                    = get_next_turn(is_human, user_deck, opponent_deck)
             played_card,\
-            is_wildcard = prompt_wildcard_turn(is_human, played_card, discard, deck)
+            is_wildcard = prompt_wildcard_turn(is_human, played_card, discard, deck, opponent_stats)
             if played_card:
                 add_to_discard(discard, played_card, deck)
                 new_card = get_next_card_in_deck(deck_generator)
@@ -78,7 +79,8 @@ def end_game(deck: dict, is_human: bool):
     pass
 
 
-def player_turn(is_human: bool, discard: list, deck: dict) -> (dict):
+def player_turn(is_human: bool, discard: list,\
+    deck: dict, opponent_stats: dict) -> (dict):
     '''
     takes in game variables and function call to any player
     and prompts them to pick an available card
@@ -88,32 +90,33 @@ def player_turn(is_human: bool, discard: list, deck: dict) -> (dict):
     available_deck = get_available_play(deck)
     cannot_play = check_user_can_play(deck[available_deck], prev_card)
     hand = deck['user_hand']
-
     if cannot_play and available_deck != 'hidden':
         add_discard_to_hand(discard, hand)
         return {}, False
 
     prompt = prompt_user_turn if is_human else prompt_opponent_turn
-    played_card = prompt(available_deck, deck, prev_card)
+    played_card = prompt(available_deck, deck, prev_card, opponent_stats)
 
     is_wildcard = check_for_wild_card(played_card)
     if available_deck == 'hidden':
+
         if played_card['value'] < prev_card['value'] and not is_wildcard:
-            add_discard_to_hand(discard, deck['user_hand'])
+            add_to_discard(discard, played_card, deck)
+            add_discard_to_hand(discard, hand)
             return {}, False
 
     return played_card, is_wildcard
 
 
 def prompt_wildcard_turn(is_human: bool, played_card: dict,\
-    discard: list, deck: dict) -> (dict):
+    discard: list, deck: dict, opponent_stats: dict) -> (dict):
     '''
     this prompt triggers when a wildcard is played and changes the state of the game
     '''
     available_deck = get_available_play(deck)
     if played_card['value'] == 2:
         prompt = prompt_user_turn if is_human else prompt_opponent_turn
-        played_card = two_is_played(prompt, played_card, deck, available_deck)
+        played_card = prompt(available_deck, deck, played_card, opponent_stats, played_card)
         is_wildcard = check_for_wild_card(played_card)
 
     elif played_card['value'] == 7:
@@ -123,19 +126,20 @@ def prompt_wildcard_turn(is_human: bool, played_card: dict,\
         if cannot_play and available_deck != 'hidden':
             add_discard_to_hand(discard, deck['user_hand'])
             return {}, False
-        played_card = seven_is_played(\
-            prompt, played_card, deck, available_deck, card_to_match\
+        played_card = prompt(\
+            available_deck, deck, card_to_match, opponent_stats, played_card\
         )
         is_wildcard = check_for_wild_card(played_card)
         if available_deck == 'hidden':
             if played_card['value'] < card_to_match['value'] and not is_wildcard:
+                add_to_discard(discard, played_card, deck)
                 add_discard_to_hand(discard, deck['user_hand'])
                 return {}, False
 
     elif played_card['value'] == 10:
         prompt = prompt_user_turn if is_human else prompt_opponent_turn
         discard.clear()
-        played_card = ten_is_played(prompt, deck, available_deck, played_card)
+        played_card = prompt(available_deck, deck, {}, opponent_stats)
         is_wildcard = check_for_wild_card(played_card)
 
     return played_card,\
@@ -144,7 +148,12 @@ def prompt_wildcard_turn(is_human: bool, played_card: dict,\
 def get_next_turn(is_human: bool, user_deck: dict, opponent_deck: dict) -> (dict):
     is_human = not is_human
     deck = user_deck if is_human else opponent_deck
-    return deck, is_human
+    opponent_deck = opponent_deck if is_human else user_deck
+    opponent_stats = {
+        "cards_in_hand": len(opponent_deck['user_hand']),
+        "visible": opponent_deck['visible']
+    }
+    return deck, opponent_stats, is_human
 
 game()
 

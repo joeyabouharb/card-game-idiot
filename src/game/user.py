@@ -32,8 +32,16 @@ def stringify_deck(user_deck: dict, available_deck: str) -> (str):
     return msg
 
 
+def display_opponent_stats(opponent_stats: dict):
+    output = '\nNumber of cards in hand:\n'
+    output += f'{opponent_stats["cards_in_hand"]}\n'
+    output += 'opponents visible cards: \n'
+    for card in opponent_stats['visible']:
+        output += f'{card["name"]}\n'
+    return f'{output}'
+
 def prompt_user_turn(available_deck: str, user_deck: dict,\
-    prev_card: dict, wildcard={}) -> (dict):
+    prev_card: dict, oppenent_stats: dict, wildcard={}) -> (dict):
     '''
     prompt user turn returns the selected card as dict
     '''
@@ -42,10 +50,9 @@ def prompt_user_turn(available_deck: str, user_deck: dict,\
     wildcard_played = "" if not wildcard else f'{wildcard["name"]} - Wildcard Played!\n'
     previous = "\nNo cards in discard\n" if not prev_card\
         else f'\nBeat Previous Card {prev_card["name"]}\n'
-    
-    print(wildcard_played)
-    print(previous)
-    print(deck)
+    stats = display_opponent_stats(oppenent_stats)
+    view =  f'{stats}\n{wildcard_played}\n{previous}\n{deck}\n'
+    print(view)
 
     user_input = None
     index = None

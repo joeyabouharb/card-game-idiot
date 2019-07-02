@@ -5,7 +5,7 @@ loading and saving game data.
 import json
 
 
-def load_deck_data()-> (list):
+def load_deck_data() -> (list):
     '''
     loads data from deck.json file and returns the deck as a list
     '''
