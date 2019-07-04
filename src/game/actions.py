@@ -57,7 +57,7 @@ def get_available_play(user_deck: dict) ->(str):
     return 'hidden'
 
 
-def check_for_wild_card(current_play: dict)-> (dict):
+def check_for_wild_card(current_play: dict)-> (bool):
     '''
     checks for wild card and changes the game execution accordingly
     returns both the new card value and the original as dict

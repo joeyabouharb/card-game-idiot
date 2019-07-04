@@ -46,9 +46,9 @@ A way to simulate a computer/ AI user is required for this game to be played. cr
 
 In order to execute the app the user must provide either these as command line arguments:
 
-- -p to play game
-- -s to return user's win resuls
-- -r or -h to provide user with rules and help help prompt
+-  \--start or -s to play game
+- \--leaderboard to return user's win resuls
+- -r and -h to provide user with rules and help help prompt respectively
 - if no arguments or an invalid one is entered automatically display the -h menu
 
 During play, user's will be displayed their current hand and their table pile like so:
@@ -114,4 +114,22 @@ if their hand has no hand that is higher than the previously played card then di
 > `Your Hand: 1) 2oC`				`2) 7oS`			`3) KoD`    ` 4) AoC`			`5) 9oS`		`6) QoD`      ` 7) 9oC`				`8) 2oS`			`9) JoC` ....
 >
 > `Select from 1-9 _`
+
+### 3. Planning and implementation
+
+#### 3.1 Checklist
+
+| Idea                                     | Queued for Implentation | In Progress    | Testing        | Completed   |
+| ---------------------------------------- | ----------------------- | -------------- | -------------- | ----------- |
+| Shuffling Deck - 13/06                   | Yes - 13/06             | Passed - 15/06 | Passed - 16/06 | Yes - 19/06 |
+| User Input - 13/06                       | Yes - 21/06             | Passed - 19/06 | Passed - 20/06 | Yes - 21/06 |
+| Input validation - 13/06                 | Yes - 14/06             | Passed - 15/06 | Passed - 20/06 | Yes - 21/06 |
+| Prompt user turns - 13/06                | Yes -  21/06            | Passed - 21/06 | Passed - 28/06 | Yes - 29/06 |
+| Rules / Wildcards 13/06                  | Yes - 21/06             | Passed - 21/06 | Passed - 1/07  | Yes - 4/06  |
+| AI - 13/06                               | Yes - 25/06             | Passed - 25/06 | Passed - 03/07 | Yes 04/07   |
+| Score saving and retrieving - 13/06      | Yes - 03/07             | Passed - 04/07 | Passed - 04/07 | Yes 04/07   |
+| Command line arguments- 13/06            | Yes - 02/06             | Passed - 04/07 | Passed - 04/07 | Yes 04/07   |
+| Adding multiple cards to discard - 29/06 | Yes - 04/06             |                |                |             |
+| 4 of a kind Bomb - 29/06                 | Yes - 04/06             |                |                |             |
+|                                          |                         |                |                |             |
 
