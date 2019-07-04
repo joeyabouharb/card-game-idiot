@@ -1,7 +1,7 @@
 '''
 Program: Idiot game App
 Author: Joseph Abouharb
-email: joey.abouharb@gmail.com
+email: ****
 github: joeyabouharb
 Licence: MIT Liscence
 

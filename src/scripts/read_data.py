@@ -27,14 +27,10 @@ def read_from_leaderboard():
 def create_leaderboard(filename: Path):
     data = {
         'leaderboard': [
-            {
-                'name': '',
-                'score': 0
-            }
         ]
     }
     with open(filename, 'w+') as read_file:
-        json.dump(data, read_file, indent=2)
+        json.dump({data}, read_file, indent=2)
 
 def stringify_leaderboard(leaderboard: list):
     output = 'Current Leaderboard: \n'

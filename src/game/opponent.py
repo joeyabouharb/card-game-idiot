@@ -2,10 +2,11 @@
 module to define AI behaviour
 '''
 import random
+from game.user import send_msg_to_user, clear_output
 from operator import (
     itemgetter
 )
-from .card_selector import (
+from game.card_selector import (
     get_played_card,
     check_card_values
 )
@@ -16,18 +17,22 @@ def prompt_opponent_turn(available_deck: str, opponent_deck: dict,\
     '''
     handles opponent turn and card selection
     '''
+    clear_output()
     enemy_is_winning = True if not opponent_stats['cards_in_hand'] else False
     random_number = generate_random_number(1, 10)
     playable_deck = opponent_deck[available_deck]
     sorted_deck = sorted(playable_deck, key=itemgetter('value'))
     is_valid = False
+
     while not is_valid:
-        index = select_choice_from_random(random_number, sorted_deck, prev_card, enemy_is_winning)
+        index = select_choice_from_random(available_deck, random_number,\
+            sorted_deck, prev_card, enemy_is_winning)
         is_valid = check_card_values(available_deck, sorted_deck, prev_card, index)
 
     played_card = get_played_card(sorted_deck, index)
     if played_card['value'] == 10:
-        print(f'{played_card["name"]}')
+        send_msg_to_user(f'Opponent Bombed the Deck!\n')
+    send_msg_to_user( f'Opponent Played: {played_card["name"]}')
     return played_card
 
 def generate_random_number(value_a: int, value_b: int) -> (int):
@@ -38,16 +43,17 @@ def generate_random_number(value_a: int, value_b: int) -> (int):
     return random.randrange(value_a, value_b)
 
 
-def select_choice_from_random(random_number: int, playable_deck: list,\
+def select_choice_from_random(available_deck: str, random_number: int, playable_deck: list,\
     prev_card: dict, enemy_is_winning: bool) -> (int):
     '''
     returns selected index from random_number
     '''
-    if random_number < 6:
+    if random_number < 4:
         index = select_randomly(playable_deck)
-    elif random_number >=6 and\
+    elif random_number >=4 and\
     random_number < 10:
-        index = select_an_ok_choice(playable_deck, prev_card, enemy_is_winning)
+        index = select_an_ok_choice(available_deck, playable_deck,\
+            prev_card, enemy_is_winning)
     return index
 
 
@@ -55,15 +61,15 @@ def select_randomly(sorted_deck: list):
     return random.choice(range(len(sorted_deck)))
 
 
-def select_an_ok_choice(sorted_deck: list, prev_card: dict, enemy_is_winning: bool):
+def select_an_ok_choice(available_deck: str, sorted_deck: list, prev_card: dict, enemy_is_winning: bool):
     '''
     let the AI select a decent play
     '''
     selected_index = None
-    if enemy_is_winning: # play high if enemy is winning
+    if enemy_is_winning and available_deck != 'hidden': # play high if enemy is winning
         sorted_deck.reverse()
         selected_index = 0
-    else: # play safe, play lowest possible card
+    elif available_deck != 'hidden': # play safe, play lowest possible card
         for i, card in enumerate(sorted_deck):
             if not prev_card or card['value'] >= prev_card['value']:
                 selected_index = i
@@ -76,4 +82,6 @@ def select_an_ok_choice(sorted_deck: list, prev_card: dict, enemy_is_winning: bo
                 selected_index = value_list.index(10)
             elif value_list.count(2):
                 selected_index = value_list.index(2)
+    else: # if hidden
+        selected_index = select_randomly(sorted_deck)
     return selected_index

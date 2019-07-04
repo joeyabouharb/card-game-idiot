@@ -86,3 +86,46 @@ def get_reversed_value(discard: list) -> (dict):
             card_to_match = card
             break
     return card_to_match
+
+
+def end_game(user_deck: dict, opponent_deck: dict, is_human: bool, name: str):
+    '''
+    handles end game by saving the game score in file
+    '''
+    score = 0
+    if is_human:
+        for hand in opponent_deck:
+            score += len(hand)
+    else:
+        for hand in user_deck:
+            score -= len(hand)
+    data = {
+            "name": name,
+            "score": score
+        }
+    return data
+
+
+def get_next_turn(is_human: bool, user_deck: dict, opponent_deck: dict) -> (dict):
+    '''
+    get's the next turn in game
+    '''
+    is_human = not is_human
+    deck = user_deck if is_human else opponent_deck
+    opponent_deck = opponent_deck if is_human else user_deck
+    opponent_stats = {
+        "cards_in_hand": len(opponent_deck['user_hand']),
+        "visible": opponent_deck['visible']
+    }
+    return deck, opponent_stats, is_human
+
+
+def stringify_result(result: dict) -> (str):
+    '''
+    returns result as string to display to user
+    '''
+    return (
+        "final score: \n"
+        f'Name:{result["name"]}\n'
+        f'Score:{result["score"]}'
+    )

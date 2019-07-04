@@ -1,8 +1,23 @@
 '''
 module to handle user turn
 '''
-from .card_selector import validate_user_input,\
+import os
+from game.card_selector import validate_user_input,\
     get_played_card
+
+
+def send_msg_to_user(msg: str):
+    '''
+    prints a mesage to the user
+    '''
+    print(msg)
+
+
+def clear_output():
+    '''
+    clears out user prompt
+    '''
+    os.system('cls ' if os.name == 'nt' else 'clear')
 
 
 def stringify_deck(user_deck: dict, available_deck: str) -> (str):
@@ -48,7 +63,6 @@ def prompt_user_turn(available_deck: str, user_deck: dict,\
     '''
     prompt user turn returns the selected card as dict
     '''
-
     deck = stringify_deck(user_deck, available_deck)
     wildcard_played = (
         ""
@@ -62,23 +76,20 @@ def prompt_user_turn(available_deck: str, user_deck: dict,\
         else
         f'\nBeat Previous Card {prev_card["name"]}\n'
     )
-
     stats = display_opponent_stats(oppenent_stats)
     view = (
         f'{stats}\n'
         f'{wildcard_played}\n' 
         f'{previous}\n' + f'{deck}\n'
     )
-
-    print(view)
+    send_msg_to_user(view)
 
     user_input = None
     index = None
     user_hand = user_deck[available_deck]
 
     while index is None:
-        user_input = input('Select available options, or type pick to pick from pile: ')
+        user_input = input('\033[1A\033[KSelect available options, or type pick to pick up discard: ')
         index = validate_user_input(available_deck, user_input, user_hand, prev_card)
-
 
     return get_played_card(user_hand, index)
