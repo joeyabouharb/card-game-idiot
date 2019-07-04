@@ -41,7 +41,6 @@ def check_card_values(available_deck: str, user_deck: list, prev_card: dict, val
     '''
     if available_deck == 'hidden':
         return True
-
     if user_deck[val]['value'] == 2 or\
         user_deck[val]['value'] == 7 or\
         user_deck[val]['value'] == 10:

@@ -1,11 +1,15 @@
+import sys, os
+sys.path.insert(0, os.path.abspath('./'))
+
+
 import json
-from read_write import load_deck_data
-from deck import *
+from game.read_write import *
+from game.deck import *
 
 def test_load_deck_data():
     data = load_deck_data()
 
-    with open('deck.json', 'r') as json_file:
+    with open('../docs/deck.json', 'r') as json_file:
         test_deck = json.load(json_file)
 
     assert test_deck['deck'] == data

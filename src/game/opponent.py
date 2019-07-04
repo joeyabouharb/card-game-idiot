@@ -5,7 +5,7 @@ import random
 from operator import (
     itemgetter
 )
-from game.card_selector import (
+from .card_selector import (
     get_played_card,
     check_card_values
 )
@@ -26,7 +26,8 @@ def prompt_opponent_turn(available_deck: str, opponent_deck: dict,\
         is_valid = check_card_values(available_deck, sorted_deck, prev_card, index)
 
     played_card = get_played_card(sorted_deck, index)
-
+    if played_card['value'] == 10:
+        print(f'{played_card["name"]}')
     return played_card
 
 def generate_random_number(value_a: int, value_b: int) -> (int):
@@ -60,8 +61,8 @@ def select_an_ok_choice(sorted_deck: list, prev_card: dict, enemy_is_winning: bo
     '''
     selected_index = None
     if enemy_is_winning: # play high if enemy is winning
-        sorted_deck = sorted(sorted_deck, reverse=True)
-        selected_index = sorted_deck[0]
+        sorted_deck.reverse()
+        selected_index = 0
     else: # play safe, play lowest possible card
         for i, card in enumerate(sorted_deck):
             if not prev_card or card['value'] >= prev_card['value']:

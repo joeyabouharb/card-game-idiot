@@ -1,6 +1,10 @@
-from actions import *
-from deck import *
-from read_write import load_deck_data
+# Tests should be run on the projects root directory in order for it to work
+import sys, os
+sys.path.insert(0, os.path.abspath('./'))
+
+from game.actions import *
+from game.deck import *
+from game.read_write import load_deck_data
 
 
 def test_validate_user_input():
@@ -21,7 +25,7 @@ def test_validate_user_input():
     assert validate_user_input('5', user_deck, prev_card) is None
     assert validate_user_input('d', user_deck, prev_card) is None
     assert validate_user_input('4', user_deck, prev_card) == 3
-
+    assert not validate_user_input('423423 ', user_deck, prev_card)
 def test_get_played_cards():
     user_deck = [
         {"name": "10 of Clubs", "value": 10},
@@ -65,12 +69,12 @@ def test_check_for_wildcard():
     discard = [{"name": "4 of Diamonds", "value":  4}]
     test_wildcard = check_for_wild_card(True, prev_card, test_card, discard )
 
-    assert test_wildcard['value'] == prev_card['value']
+    assert test_wildcard['current_play']['value'] == prev_card['value']
 
     val = validate_user_input('3', user_deck, prev_card)
     test_card = get_played_card(user_deck, val)
     test_wildcard = check_for_wild_card(True, prev_card, test_card, discard )
-    assert test_wildcard['value'] == 0
+    assert test_wildcard['current_play']['value'] == 0
 
     val = validate_user_input('1', user_deck, prev_card)
     test_card = get_played_card(user_deck, val)
@@ -81,4 +85,4 @@ def test_check_for_wildcard():
     val = validate_user_input('4', user_deck, prev_card)
     test_card = get_played_card(user_deck, val)
     test_wildcard = check_for_wild_card(True, prev_card, test_card, discard )
-    assert test_card is test_wildcard
+    assert test_card is test_wildcard['current_play']

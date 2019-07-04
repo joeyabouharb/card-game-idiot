@@ -1,19 +1,20 @@
 '''
 handles general gameplay, interactions with user and opponent, etc.
 '''
-from game.user import prompt_user_turn
-from game.actions import (
+from .user import prompt_user_turn
+from .actions import (
     add_discard_to_hand, add_to_discard,
     get_available_play, get_previous_play,
     check_user_can_play, check_for_wild_card,
     get_reversed_value
 )
-from game.deck import (
+from .deck import (
     get_cards_in_deck, get_next_card_in_deck,
     split_hand, hand_player_cards
 )
-from game.read_write import load_deck_data
-from game.opponent import prompt_opponent_turn
+from .read_write import load_deck_data
+from .opponent import prompt_opponent_turn
+
 
 def game(name: str):
     '''
@@ -72,7 +73,10 @@ def check_if_game_ended(user_deck: dict, opponent_deck: dict) -> (bool):
 
 
 def end_game(deck: dict, is_human: bool):
-    pass
+    '''
+    handles end game by saving the game score in file
+    '''
+    return 'not implemented'
 
 
 def player_turn(is_human: bool, discard: list,\
@@ -95,8 +99,8 @@ def player_turn(is_human: bool, discard: list,\
 
     is_wildcard = check_for_wild_card(played_card)
     if available_deck == 'hidden':
-
-        if played_card['value'] < prev_card['value'] and not is_wildcard:
+        if not is_wildcard and not prev_card and\
+        played_card['value'] < prev_card['value']:
             add_to_discard(discard, played_card, deck)
             add_discard_to_hand(discard, hand)
             return {}, False
@@ -127,7 +131,8 @@ def prompt_wildcard_turn(is_human: bool, played_card: dict,\
         )
         is_wildcard = check_for_wild_card(played_card)
         if available_deck == 'hidden':
-            if played_card['value'] < card_to_match['value'] and not is_wildcard:
+            if not is_wildcard and not card_to_match and\
+                played_card['value'] < card_to_match['value']:
                 add_to_discard(discard, played_card, deck)
                 add_discard_to_hand(discard, deck['user_hand'])
                 return {}, False
@@ -141,7 +146,11 @@ def prompt_wildcard_turn(is_human: bool, played_card: dict,\
     return played_card,\
             is_wildcard
 
+
 def get_next_turn(is_human: bool, user_deck: dict, opponent_deck: dict) -> (dict):
+    '''
+    get's the next turn in game
+    '''
     is_human = not is_human
     deck = user_deck if is_human else opponent_deck
     opponent_deck = opponent_deck if is_human else user_deck
@@ -151,4 +160,6 @@ def get_next_turn(is_human: bool, user_deck: dict, opponent_deck: dict) -> (dict
     }
     return deck, opponent_stats, is_human
 
-
+if __name__ == '__main__':
+    game('hello')
+    
