@@ -88,3 +88,21 @@ def test_check_for_wildcard():
     test_card = get_played_card(user_deck, val)
     test_wildcard = check_for_wild_card(test_card)
     assert  test_wildcard is False
+
+def test_four_of_a_kind():
+    discard = [
+                {"name": "8 of Clubs" , "value":  8},
+                {"name": "8 of Spades" , "value":  8},
+                {"name": "8 of Diamonds" , "value":  8},
+                {"name": "2 of Clubs" , "value":  2}
+    ]
+    player_hand_test = {
+        "user_hand": [
+        {"name": "8 of Hearts" , "value":  8},
+        {"name": "9 of Hearts" , "value":  9}
+        ]
+    }
+    test_card = {"name": "8 of Hearts" , "value":  8}
+    add_to_discard(discard, test_card, player_hand_test)
+    check_four_of_a_kind(discard)
+    assert not discard

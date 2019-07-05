@@ -62,4 +62,3 @@ def get_next_card_in_deck(deck: types.GeneratorType)-> (dict):
     return next card in deck
     '''
     return next(deck, False)
-

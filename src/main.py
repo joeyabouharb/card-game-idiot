@@ -7,10 +7,9 @@ Licence: MIT Liscence
 
 Have Fun!
 '''
-
 import argparse
-from game.game import game
-from scripts.read_data import (
+from game import game
+from read_data import (
     read_from_game_rules, read_from_leaderboard,
     stringify_leaderboard
 )
