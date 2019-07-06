@@ -18,7 +18,11 @@ def two_is_played(prompt: types.FunctionType, available_deck: str,\
     played_card = prompt(
         available_deck, deck, played_card, opponent_stats
     )
-    card = played_card if isinstance(played_card, dict) else played_card[0]
+    card = (
+        played_card
+        if isinstance(played_card, dict)
+        else played_card[0]
+    )
     is_wildcard = check_for_wild_card(card)
     return (
         played_card,
@@ -39,7 +43,11 @@ def seven_is_played(prompt: types.FunctionType, available_deck: str,\
     played_card = prompt(
         available_deck, deck, card_to_match, opponent_stats, played_card\
     )
-    card = played_card if isinstance(played_card, dict) else played_card[0]
+    card = (
+        played_card
+        if isinstance(played_card, dict)
+        else played_card[0]
+    )
     is_wildcard = check_for_wild_card(card)
 
     if available_deck == 'hidden':
@@ -61,7 +69,11 @@ def ten_is_played(prompt: types.FunctionType, available_deck: str,\
     '''
     discard.clear()
     played_card = prompt(available_deck, deck, {}, opponent_stats)
-    card = played_card if isinstance(played_card, dict) else played_card[0]
+    card = (
+        played_card
+        if isinstance(played_card, dict)
+        else played_card[0]
+    )
     is_wildcard = check_for_wild_card(card)
     return (
         played_card,

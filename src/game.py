@@ -37,29 +37,26 @@ def game(name: str):
     opponent_deck = hand_player_cards(deck_generator)
     user_deck = split_hand(user_deck)
     opponent_deck = split_hand(opponent_deck)
-
     discard = []
     played_card = {}
     is_human = False
     is_wildcard = False
+
     while not check_if_game_ended(user_deck, opponent_deck):
         (deck, opponent_stats, is_human)\
             = get_next_turn(is_human, user_deck, opponent_deck)
+
         (played_card, is_wildcard)\
             = player_turn(is_human, discard, deck, opponent_stats)
+
         (played_card)\
             = on_card_played(deck, played_card, deck_generator, discard)
 
-        if played_card:
-            if check_four_of_a_kind(discard) or\
-            played_card['value'] == 10:
-                is_wildcard = True
-                is_bomb = True
-            else:
-                is_bomb = False
+        (is_bomb, is_wildcard)\
+            = check_if_bomb(discard, played_card, is_wildcard)
 
         while is_wildcard and\
-            not check_if_game_ended(user_deck, opponent_deck):
+        not check_if_game_ended(user_deck, opponent_deck):
 
             if not is_bomb:
                 (deck, opponent_stats, is_human)\
@@ -69,22 +66,33 @@ def game(name: str):
                 = prompt_wildcard_turn(is_human, discard, deck, opponent_stats, played_card)
             (played_card)\
                 = on_card_played(deck, played_card, deck_generator, discard)
+            (is_bomb, is_wildcard)\
+                = check_if_bomb(discard, played_card, is_wildcard)
 
-            if played_card:
-                if check_four_of_a_kind(discard) or\
-                played_card['value'] == 10:
-                    is_wildcard = True
-                    is_bomb = True
-                else:
-                    is_bomb = False
+    handle_end_game(user_deck, opponent_deck, is_human, name)
 
-
-
+def handle_end_game(user_deck: dict, opponent_deck: dict,\
+    is_human: bool, name: str) -> (None):
     result = end_game(user_deck, opponent_deck, is_human, name)
     send_msg_to_user(stringify_result(result))
     leaderboard = load_leaderboard_data()
     leaderboard_list = leaderboard
     save_game_results(leaderboard_list, result)
+
+def check_if_bomb(discard: list, played_card: dict,\
+is_wildcard: bool) -> (bool):
+    '''
+    check's if deck can be bombed, sends the action down to the wildcard prompt
+    '''
+    is_bomb = False
+    if played_card:
+        if check_four_of_a_kind(discard) or\
+        played_card['value'] == 10:
+            is_wildcard = True
+            is_bomb = True
+        else:
+            is_bomb = False
+    return is_bomb, is_wildcard
 
 
 def on_card_played(deck: dict, played_card: dict,\
@@ -127,7 +135,11 @@ def player_turn(is_human: bool, discard: list,\
 
     prompt = prompt_user_turn if is_human else prompt_opponent_turn
     played_card = prompt(available_deck, deck, prev_card, opponent_stats)
-    card = played_card if isinstance(played_card, dict) else played_card[0]
+    card = (
+        played_card
+        if isinstance(played_card, dict)
+        else played_card[0]
+    )
     is_wildcard = check_for_wild_card(card)
 
     if available_deck == 'hidden':
