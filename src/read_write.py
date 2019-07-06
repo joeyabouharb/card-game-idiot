@@ -1,6 +1,6 @@
 '''
-module to handle read and write to file system -
-loading and saving game data.
+module to handle read and write to file system during gameplay
+loading and saving game data like leader boards and card deck
 '''
 import json
 

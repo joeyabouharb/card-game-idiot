@@ -1,5 +1,6 @@
 '''
-read write functionality to read rules and leaderboards
+read write functionality to read rules and leaderboards - accessed through
+arguments
 '''
 import json
 from pathlib import Path
@@ -35,5 +36,5 @@ def create_leaderboard(filename: Path):
 def stringify_leaderboard(leaderboard: list):
     output = 'Current Leaderboard: \n'
     for user in leaderboard:
-        output += f'Name: {user["name"]}\nScore: {user["score"]}'
+        output += f'\n Name: {user["name"]}\n Score: {user["score"]}'
     return output

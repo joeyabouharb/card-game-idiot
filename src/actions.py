@@ -1,6 +1,7 @@
 '''
 This file defines actions user/s can make in order to play the game
 '''
+from user import send_msg_to_user
 
 
 def add_to_discard(discard: list, prev_play: dict, player_hand: dict) -> (None):
@@ -95,11 +96,13 @@ def end_game(user_deck: dict, opponent_deck: dict, is_human: bool, name: str):
     '''
     score = 0
     if is_human:
-        for hand in opponent_deck:
-            score += len(hand)
+        score = len(opponent_deck['user_hand']) +\
+                len(opponent_deck['visible']) + \
+                len(opponent_deck['hidden'])
     else:
-        for hand in user_deck:
-            score -= len(hand)
+        score = len(user_deck['user_hand']) -\
+                len(user_deck['visible']) -\
+                len(user_deck['hidden'])
     data = {
         "name": name,
         "score": score
@@ -152,5 +155,5 @@ def check_four_of_a_kind(discard: list) -> (bool):
     card_set = discard[:4]
     prev_card = get_previous_play(discard)
     if all(card['value'] == prev_card['value'] for card in card_set):
-        discard.clear()
-    return True
+        send_msg_to_user('Four of a kind! deck bombed!')
+        return True

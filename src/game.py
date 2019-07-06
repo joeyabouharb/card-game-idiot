@@ -42,7 +42,6 @@ def game(name: str):
     played_card = {}
     is_human = False
     is_wildcard = False
-
     while not check_if_game_ended(user_deck, opponent_deck):
         (deck, opponent_stats, is_human)\
             = get_next_turn(is_human, user_deck, opponent_deck)
@@ -50,17 +49,36 @@ def game(name: str):
             = player_turn(is_human, discard, deck, opponent_stats)
         (played_card)\
             = on_card_played(deck, played_card, deck_generator, discard)
-        check_four_of_a_kind(discard)
+
+        if played_card:
+            if check_four_of_a_kind(discard) or\
+            played_card['value'] == 10:
+                is_wildcard = True
+                is_bomb = True
+            else:
+                is_bomb = False
+
         while is_wildcard and\
             not check_if_game_ended(user_deck, opponent_deck):
-            if played_card['value'] != 10:
+
+            if not is_bomb:
                 (deck, opponent_stats, is_human)\
                     = get_next_turn(is_human, user_deck, opponent_deck)
+
             (played_card, is_wildcard)\
                 = prompt_wildcard_turn(is_human, discard, deck, opponent_stats, played_card)
             (played_card)\
                 = on_card_played(deck, played_card, deck_generator, discard)
-            check_four_of_a_kind(discard)
+
+            if played_card:
+                if check_four_of_a_kind(discard) or\
+                played_card['value'] == 10:
+                    is_wildcard = True
+                    is_bomb = True
+                else:
+                    is_bomb = False
+
+
 
     result = end_game(user_deck, opponent_deck, is_human, name)
     send_msg_to_user(stringify_result(result))
@@ -103,6 +121,8 @@ def player_turn(is_human: bool, discard: list,\
 
     if cannot_play and available_deck != 'hidden':
         add_discard_to_hand(discard, hand)
+        player = 'You' if is_human else "Opponent"
+        send_msg_to_user(f'{player} had no play! picked up discard :O')
         return {}, False
 
     prompt = prompt_user_turn if is_human else prompt_opponent_turn
@@ -115,6 +135,8 @@ def player_turn(is_human: bool, discard: list,\
         and played_card['value'] < prev_card['value']:
             add_to_discard(discard, played_card, deck)
             add_discard_to_hand(discard, hand)
+            user = 'You' if is_human else 'Opponent'
+            send_msg_to_user(f'{user} had no play! picked up discard :(')
             return {}, False
     return played_card, is_wildcard
 
@@ -132,7 +154,7 @@ def prompt_wildcard_turn(is_human: bool, discard: list,\
     elif played_card['value'] == 7:
         (card, is_wildcard)\
             = seven_is_played(prompt, available_deck, deck, discard, opponent_stats)
-    elif played_card['value'] == 10:
+    else:
         (card, is_wildcard)\
             = ten_is_played(prompt, available_deck, deck, discard, opponent_stats)
     return (

@@ -1,3 +1,4 @@
+#!/bin/python
 '''
 Program: Idiot game App
 Author: Joseph Abouharb

@@ -17,7 +17,7 @@ def send_msg_to_user(msg: str):
     prints a mesage to the user
     '''
     print(msg)
-
+    input('Enter to continue...')
 
 def clear_output():
     '''
@@ -103,8 +103,10 @@ def prompt_user_turn(available_deck: str, user_deck: dict,\
         f'{wildcard_played}\n'
         f'{previous}\n' + f'{deck}\n'
     )
-    send_msg_to_user(view)
+    print(view)
     play = handle_user_play(available_deck, user_deck, prev_card)
+    if available_deck == 'hidden':
+        send_msg_to_user(f'played: {play["name"]}')
     clear_output()
     return play
 

@@ -13,7 +13,7 @@ from card_selector import (
 
 
 def prompt_opponent_turn(available_deck: str, opponent_deck: dict,\
-        prev_card: dict, opponent_stats: dict, wildcard=False):
+        prev_card: dict, opponent_stats: dict, wildcard=False) -> (dict):
     '''
     handles opponent turn and card selection
     '''
@@ -29,11 +29,17 @@ def prompt_opponent_turn(available_deck: str, opponent_deck: dict,\
         index = select_choice_from_random(available_deck, random_number,\
             sorted_deck, prev_card, enemy_is_winning)
         is_valid = check_card_values(available_deck, sorted_deck, prev_card, index)
-    duplicate = get_playable_cards(sorted_deck, index)
+    duplicate = []
+    wildcards = [2, 7, 10]
+    if available_deck != 'hidden' and\
+    sorted_deck[index]["value"] not in wildcards:
+        duplicate = get_playable_cards(sorted_deck, index)
 
     selected_card = get_played_card(sorted_deck, index)
     if len(duplicate) > 1 and selected_card['value'] :
-        played_card = duplicate
+            played_card = duplicate
+            for card in played_card:
+                send_msg_to_user(f'played {card["name"]}')
     else:
         played_card = selected_card
         if played_card['value'] == 10:
@@ -93,8 +99,10 @@ def select_an_ok_choice(available_deck: str, sorted_deck: list,\
         if not prev_card or sorted_deck[0]['value'] >= prev_card['value']:
             selected_index = 0
     elif available_deck != 'hidden': # play safe, play lowest possible card
+        wildcards = [2, 7, 10]
         for i, card in enumerate(sorted_deck):
-            if not prev_card or card['value'] >= prev_card['value']:
+            if not prev_card or card['value'] >= prev_card['value'] and\
+            card['value'] not in wildcards:
                 selected_index = i
                 break
     else: # if hidden
@@ -105,6 +113,6 @@ def select_an_ok_choice(available_deck: str, sorted_deck: list,\
             selected_index = value_list.index(7)
         elif value_list.count(10) > 0:
             selected_index = value_list.index(10)
-        elif value_list.count(2):
+        elif value_list.count(2) > 0:
             selected_index = value_list.index(2)
     return selected_index
