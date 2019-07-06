@@ -36,5 +36,5 @@ In source directory:
 
    `./build.sh`
 
-4. then in the dist/ directory run `idiot game --start NAME` or with the args listed above!
+4. then in the dist/ directory run `idiotgame --start NAME` or with the args listed above!
 
