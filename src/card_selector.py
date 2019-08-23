@@ -3,8 +3,12 @@ helps validate player card selection and return the appropriate card
 '''
 
 
-def validate_user_input(available_deck: str, user_input: str, user_deck: list,
-                        prev_card: dict)-> (int):
+def validate_user_input(
+    available_deck: str,
+    user_input: str,
+    user_deck: list,
+    prev_card: dict
+)-> (int):
     '''
     validates user input to int,
     checks if played card is higher than the prev_card and
@@ -13,27 +17,30 @@ def validate_user_input(available_deck: str, user_input: str, user_deck: list,
     user_input = user_input.strip()
     if not user_input.isdigit():
         return None
-        # val = validate_user_input(
-            # input('not a number try again: ', user_deck, prev_card))
     try:
         val = int(user_input) - 1
     except ValueError:
         return None
-        # val = validate_user_input(input('please enter a number from 1-3... '))
 
     if val >= len(user_deck):
         return None
-        # val = validate_user_input(
-        #    input('please enter a number from 1-3 '), user_deck, prev_card)
-    if not check_card_values(available_deck, user_deck, prev_card, val):
+    if not check_card_values(
+        available_deck,
+        user_deck,
+        prev_card,
+        val
+    ):
         return None
-        # val = validate_user_input(
-        #    input('please enter a number from 1-3 '), user_deck, prev_card)
 
     return val
 
 
-def check_card_values(available_deck: str, user_deck: list, prev_card: dict, val: int)-> (bool):
+def check_card_values(
+    available_deck: str,
+    user_deck: list,
+    prev_card: dict,
+    val: int
+)-> (bool):
     '''
     checks the player deck against the previous play,
     if no higher card is found return True or False
@@ -55,7 +62,10 @@ def check_card_values(available_deck: str, user_deck: list, prev_card: dict, val
     return True
 
 
-def get_played_card(user_deck: list, play_card: int)-> (dict):
+def get_played_card(
+    user_deck: list,
+    play_card: int
+)-> (dict):
     '''
     takes in the current user deck as list,
     and the play card which is int
@@ -65,42 +75,75 @@ def get_played_card(user_deck: list, play_card: int)-> (dict):
     return card
 
 
-def validate_multi_input(available_deck: str, val_list: list,\
-    user_hand: list, prev_card: dict) -> (list):
+def validate_multi_input(
+    available_deck: str,
+    val_list: list,
+    user_hand: list,
+    prev_card: dict
+) -> (list):
     '''
     validate user input
     '''
     if not val_list:
         return False
-    if any(val.strip() == '' for val in val_list):
+    if any(
+        val.strip() == ''
+        for val in val_list
+    ):
         return False
 
     if not available_deck == 'hidden':
-        index_list = convert_val_list(val_list)
+        index_list =\
+            convert_val_list(val_list)
         card_match\
-            = check_if_cards_playable(user_hand, index_list, prev_card)
+            = check_if_cards_playable(
+                user_hand,
+                index_list,
+                prev_card
+            )
     if not card_match:
         return False 
-    is_same_value = check_if_cards_match(user_hand, index_list)
-    return index_list if is_same_value else False
+    is_same_value =\
+        check_if_cards_match(
+            user_hand,
+            index_list
+        )
+    return (
+        index_list
+        if is_same_value
+        else False
+    )
 
 
-def check_if_cards_match(user_hand: list, index_list: list) -> (bool):
+def check_if_cards_match(
+    user_hand: list,
+    index_list: list
+) -> (bool):
     '''
     checks if cards match returns boolean
     '''
-    if all(user_hand[index]['value'] == user_hand[index_list[0]]['value'] for index in index_list):
+    if all(
+        user_hand[index]['value']\
+        == user_hand[index_list[0]]['value']
+        for index in index_list
+    ):
         return True
     return False
 
 
-def check_if_cards_playable(user_hand: list,\
-    index_list: list, prev_card: dict) -> (bool):
+def check_if_cards_playable(
+    user_hand: list,
+    index_list: list,
+    prev_card: dict
+) -> (bool):
     '''
     checks if card is playable
     '''
     if index_list:
-        if any(value > len(user_hand) for value in index_list):
+        if any(
+            value > len(user_hand)
+            for value in index_list
+        ):
             return False
         card_to_match = user_hand[index_list[0]]
         wildcards = [2, 7, 10]
@@ -112,7 +155,9 @@ def check_if_cards_playable(user_hand: list,\
     return True
 
 
-def convert_val_list(val_list: list) -> (list):
+def convert_val_list(
+    val_list: list
+) -> (list):
     '''
     converts string list to int list
     '''

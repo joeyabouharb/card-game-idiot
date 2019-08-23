@@ -12,12 +12,13 @@ from card_selector import (
     validate_multi_input
 )
 
-def send_msg_to_user(msg: str):
+def send_msg_to_user(msg: str, prompt=True):
     '''
     prints a mesage to the user
     '''
     print(msg)
-    input('Enter to continue...')
+    if prompt:
+        input('Enter to continue...')
 
 def clear_output():
     '''
@@ -72,7 +73,10 @@ def sort_deck(available_deck: str, user_deck: dict):
     sorts the deck in order
     '''
     if available_deck == 'user_hand':
-        sorted_deck = sorted(user_deck[available_deck], key=itemgetter('value'))
+        sorted_deck = sorted(
+            user_deck[available_deck],
+            key=itemgetter('value')
+        )
         user_deck[available_deck] = sorted_deck
 
 
@@ -103,7 +107,7 @@ def prompt_user_turn(available_deck: str, user_deck: dict,\
         f'{wildcard_played}\n'
         f'{previous}\n' + f'{deck}\n'
     )
-    print(view)
+    send_msg_to_user(view, False)
     play = handle_user_play(available_deck, user_deck, prev_card)
     if available_deck == 'hidden':
         send_msg_to_user(f'played: {play["name"]}')
@@ -111,10 +115,12 @@ def prompt_user_turn(available_deck: str, user_deck: dict,\
     return play
 
 
-def handle_user_play(available_deck: str, user_deck: dict,\
+def handle_user_play(\
+    available_deck: str, user_deck: dict,\
     prev_card: dict) -> (object):
     '''
-    function that handles user input, determines whether user is playing multiple cards or not
+    function that handles user input, determines whether
+    user is playing multiple cards or not
     '''
     user_hand = user_deck[available_deck]
     play = {}
@@ -123,13 +129,31 @@ def handle_user_play(available_deck: str, user_deck: dict,\
         split_input = user_input.split(' ')
         is_multiple = len(split_input) > 1
         if not is_multiple:
-            index = validate_user_input(available_deck, user_input, user_hand, prev_card)
+            index = validate_user_input(
+                available_deck,
+                user_input,
+                user_hand,
+                prev_card
+            )
             if index is not None:
-                play = get_played_card(user_hand, index)
+                play = get_played_card(
+                    user_hand,
+                    index
+                )
         else:
-            indexes = validate_multi_input(available_deck, split_input, user_hand, prev_card)
+            indexes = validate_multi_input(
+                available_deck,
+                split_input,
+                user_hand,
+                prev_card
+            )
             play = []
             if indexes:
                 for number in indexes:
-                    play.append(get_played_card(user_hand, number))
+                    play.append(
+                        get_played_card(
+                            user_hand,
+                            number
+                        )
+                    )
     return play

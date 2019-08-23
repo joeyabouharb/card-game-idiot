@@ -4,17 +4,32 @@ This file defines actions user/s can make in order to play the game
 from user import send_msg_to_user
 
 
-def add_to_discard(discard: list, prev_play: dict, player_hand: dict) -> (None):
+def add_to_discard(
+    discard: list,
+    prev_play: dict,
+    player_hand: dict
+) -> (None):
     '''
     adds played card to discard pile
     '''
 
-    available_hand = get_available_play(player_hand)
-    player_hand[available_hand].remove(prev_play)
-    discard.insert(0, prev_play)
+    available_hand =\
+        get_available_play(
+            player_hand
+        )
+    player_hand[available_hand]\
+        .remove(
+            prev_play
+        )
+    discard.insert(
+        0,
+        prev_play
+    )
 
 
-def get_previous_play(discard: list) -> (dict):
+def get_previous_play(
+    discard: list
+) -> (dict):
     '''
     returns previously added card to discard
     '''
@@ -23,7 +38,10 @@ def get_previous_play(discard: list) -> (dict):
     return discard[0]
 
 
-def check_user_can_play(player_hand: list, prev_play: dict) -> (bool):
+def check_user_can_play(
+    player_hand: list,
+    prev_play: dict
+) -> (bool):
     '''
     if all cards in deck is not greater than the previously played card,
     return False otherwise return True
@@ -31,25 +49,40 @@ def check_user_can_play(player_hand: list, prev_play: dict) -> (bool):
     card_checks = []
     wild_cards = [2, 7, 10]
     if not prev_play or\
-        any(card['value'] in wild_cards for card in player_hand):
+    any(
+        card['value'] in wild_cards
+        for card in player_hand
+    ):
         return False
 
     for card in player_hand:
-        card_checks.append(card['value'] >= prev_play['value'])
-    return all(not check for check in card_checks)
+        card_checks.append(
+            card['value'] >= prev_play['value']
+        )
+    return all(
+        not check
+        for check
+        in card_checks
+    )
 
 
-def add_discard_to_hand(discard: list, player_hand: list) -> (None):
+def add_discard_to_hand(
+    discard: list,
+    player_hand: list
+) -> (None):
     '''
     adds discard to player hand
     '''
-    player_hand.extend(discard.copy())
+    player_hand.extend(
+        discard.copy()
+    )
     discard.clear()
 
 
 def get_available_play(user_deck: dict) ->(str):
     '''
-    checks what current deck the user could play returns the dictionary
+    checks what current deck the user could play
+    returns the dictionary
     key -> string
     '''
     if user_deck['user_hand']:
@@ -90,19 +123,31 @@ def get_reversed_value(discard: list) -> (dict):
     return card_to_match
 
 
-def end_game(user_deck: dict, opponent_deck: dict, is_human: bool, name: str):
+def end_game(
+    user_deck: dict,
+    opponent_deck: dict,
+    is_human: bool,
+    name: str
+):
     '''
     handles end game by saving the game score in file
     '''
     score = 0
     if is_human:
-        score = len(opponent_deck['user_hand']) +\
-                len(opponent_deck['visible']) + \
-                len(opponent_deck['hidden'])
+        score = (
+            len(opponent_deck['user_hand']) +
+            len(opponent_deck['visible']) + 
+            len(opponent_deck['hidden'])
+        )
     else:
-        score = len(user_deck['user_hand']) -\
-                len(user_deck['visible']) -\
-                len(user_deck['hidden'])
+        score = 0 - (
+            len(user_deck['user_hand']) +
+            len(user_deck['visible']) +
+            len(user_deck['hidden'])
+        )
+    print(f'{is_human} {score}')
+    print(user_deck)
+    print(opponent_deck)
     data = {
         "name": name,
         "score": score
@@ -110,22 +155,41 @@ def end_game(user_deck: dict, opponent_deck: dict, is_human: bool, name: str):
     return data
 
 
-def get_next_turn(is_human: bool, user_deck: dict,\
-    opponent_deck: dict) -> (dict, dict, bool):
+def get_next_turn(
+    is_human: bool,
+    user_deck: dict,
+    opponent_deck: dict
+) -> (dict, dict, bool):
     '''
     get's the next turn in game
     '''
     is_human = not is_human
-    deck = user_deck if is_human else opponent_deck
-    opponent_deck = opponent_deck if is_human else user_deck
+    deck = (
+        user_deck
+        if is_human
+        else opponent_deck
+    )
+    opponent_deck = (
+        opponent_deck
+        if is_human
+        else user_deck
+    )
     opponent_stats = {
-        "cards_in_hand": len(opponent_deck['user_hand']),
+        "cards_in_hand": len(
+            opponent_deck['user_hand']
+        ),
         "visible": opponent_deck['visible']
     }
-    return deck, opponent_stats, is_human
+    return (
+        deck,
+        opponent_stats,
+        is_human
+    )
 
 
-def stringify_result(result: dict) -> (str):
+def stringify_result(
+    result: dict
+) -> (str):
     '''
     returns result as string to display to user
     '''
@@ -136,16 +200,29 @@ def stringify_result(result: dict) -> (str):
     )
 
 
-def check_if_game_ended(user_deck: dict, opponent_deck: dict) -> (bool):
+def check_if_game_ended(
+    user_deck: dict,
+    opponent_deck: dict
+) -> (bool):
     '''
     checks if cards have been exhausted from both player decks
     '''
     return (
-        all(not filled for filled in user_deck.values()) or
-        all(not filled for filled in opponent_deck.values())
+        all(
+            not filled
+            for filled
+            in user_deck.values()
+        )or
+        all(
+            not filled
+            for filled
+            in opponent_deck.values()
+        )
     )
 
-def check_four_of_a_kind(discard: list) -> (bool):
+def check_four_of_a_kind(
+    discard: list
+) -> (bool):
     '''
     check's if there was a 4 of a kind play, bombs the deck
     '''
@@ -154,6 +231,13 @@ def check_four_of_a_kind(discard: list) -> (bool):
 
     card_set = discard[:4]
     prev_card = get_previous_play(discard)
-    if all(card['value'] == prev_card['value'] for card in card_set):
-        send_msg_to_user('Four of a kind! deck bombed!')
+    if all(
+        card['value'] == prev_card['value']
+        for card in card_set
+    ):
+        send_msg_to_user(
+            'Four of a kind!',
+            False
+        )
         return True
+    return False

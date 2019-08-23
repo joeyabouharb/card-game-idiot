@@ -21,9 +21,22 @@ def main():
     main app
     '''
     parser = argparse.ArgumentParser()
-    parser.add_argument('--rules', help='shows game rules', action='store_true')
-    parser.add_argument('--start', '-s', help='start a game with player name', dest='name')
-    parser.add_argument('--leaderboard', help='read leaderboard', action='store_true')
+    parser.add_argument(
+        '--rules',
+        help='shows game rules',
+        action='store_true'
+    )
+    parser.add_argument(
+        '--start',
+        '-s',
+        help='start a game with player name',
+        dest='name'
+    )
+    parser.add_argument(
+        '--leaderboard',
+        help='read leaderboard',
+        action='store_true'
+    )
     args = parser.parse_args()
     if args.name:
         name = args.name

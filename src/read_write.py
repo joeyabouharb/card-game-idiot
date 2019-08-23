@@ -5,13 +5,14 @@ loading and saving game data like leader boards and card deck
 import json
 
 
-def load_deck_data() -> (list):
+def load_deck_data() -> (tuple):
     '''
     loads data from deck.json file and returns the deck as a list
     '''
     with open('../docs/deck.json', 'r') as json_file:
         data = json.load(json_file)
-    return data['deck']
+    lis = []
+    return tuple(data['deck'])
 
 
 def load_leaderboard_data() -> (list):

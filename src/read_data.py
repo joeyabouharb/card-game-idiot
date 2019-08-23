@@ -22,8 +22,11 @@ def read_from_leaderboard():
     with open(filename, 'r') as json_file:
         data = json.load(json_file)
     leaderboard = data['leaderboard']
-    return leaderboard if any(user['name'] for user in leaderboard)\
+    return(
+        leaderboard
+        if any(user['name'] for user in leaderboard)
         else ''
+    )
 
 def create_leaderboard(filename: Path):
     data = {
@@ -36,5 +39,10 @@ def create_leaderboard(filename: Path):
 def stringify_leaderboard(leaderboard: list):
     output = 'Current Leaderboard: \n'
     for user in leaderboard:
-        output += f'\n Name: {user["name"]}\n Score: {user["score"]}'
+        output +=\
+            (
+                f'\n Name: {user["name"]}\n'
+                f'Score: {user["score"]}'
+            )
+
     return output
